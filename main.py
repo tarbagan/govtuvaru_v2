@@ -12,6 +12,7 @@ def clear(str):
     return str
 
 def page_parser(page_url):
+    '''Paginaion funcion'''
     url_page = []
     r = requests.get(page_url)
     soup = bs(r.text, 'lxml' )
@@ -22,6 +23,7 @@ def page_parser(page_url):
     return url_page
 
 def get_page(page):
+    '''Parser page'''
     r = requests.get(page)
     soup = bs(r.text, 'lxml')
     tag = (soup.findAll( "td", {"class": "main-column"} ))
@@ -39,6 +41,7 @@ def get_page(page):
     return news
 
 with open( 'd:/AnacodaProgect/2019_may/govtuva.txt', 'a', encoding='utf8') as file:
+    '''save to file'''
     pool = ThreadPool(5)
     for page_url in page_all:
         try:
