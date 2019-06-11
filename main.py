@@ -14,18 +14,18 @@ def clear(str):
 def page_parser(page_url):
     '''Paginaion funcion'''
     url_page = []
-    r = requests.get(page_url)
-    soup = bs(r.text, 'lxml' )
+    req = requests.get(page_url)
+    soup = bs(req.text, 'lxml' )
     tag = (soup.findAll( "div",{"class": "news-item"}))
-    for i in tag:
-        url = ('http://gov.tuva.ru'+i.find("a").get('href'))
+    for page_in in tag:
+        url = ('http://gov.tuva.ru{}'.format(page_in.find("a").get('href')))
         url_page.append(url)
     return url_page
 
 def get_page(page):
     '''Parser page'''
-    r = requests.get(page)
-    soup = bs(r.text, 'lxml')
+    req = requests.get(page)
+    soup = bs(req.text, 'lxml')
     tag = (soup.findAll( "td", {"class": "main-column"} ))
     for i in tag:
         cat = i.find("ul", {"class": "breadcrumb-navigation"}).text.split('>')[-1][1:]
@@ -40,7 +40,8 @@ def get_page(page):
         news = {'title': title, 'content': content, 'cat': cat,'image': image, 'date': date, 'url': url,}
     return news
 
-with open( 'd:/AnacodaProgect/2019_may/govtuva.txt', 'a', encoding='utf8') as file:
+record_file = 'govtuva.txt'
+with open(record_file, 'a', encoding='utf8') as file:
     '''save to file'''
     pool = ThreadPool(5)
     for page_url in page_all:
