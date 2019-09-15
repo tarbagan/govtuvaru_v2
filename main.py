@@ -40,9 +40,9 @@ def get_page(page):
         news = {'title': title, 'content': content, 'cat': cat,'image': image, 'date': date, 'url': url,}
     return news
 
-page_all = ['http://gov.tuva.ru/press_center/news/?PAGEN_1=%s' % i for i in range(1,405)]
 with open(SAVE_FILE, 'a', encoding='utf8') as file:
     pool = ThreadPool(5)
+    page_all = ['http://gov.tuva.ru/press_center/news/?PAGEN_1=%s' % i for i in range( 1, 405 )]
     for page_url in page_all:
         try:
             news_pool = pool.map(get_page, page_parser(page_url))
@@ -50,5 +50,3 @@ with open(SAVE_FILE, 'a', encoding='utf8') as file:
             print (e)
         for i in news_pool:
             file.write(str(i)+'\n')
-
-file.close()
