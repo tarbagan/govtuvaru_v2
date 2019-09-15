@@ -3,12 +3,12 @@ from bs4 import BeautifulSoup as bs
 from multiprocessing.dummy import Pool as ThreadPool
 import re
 
-page_all = ['http://gov.tuva.ru/press_center/news/?PAGEN_1=%s' % i for i in range(1,405)]
+SAVE_FILE = 'govtuva.txt'
 
 def clear(str):
-    str = re.sub( '\n', '', str )
-    str = re.sub( '\t', '', str )
-    str = re.sub( '\xa0', '', str )
+    str = re.sub( '\n', '', str)
+    str = re.sub( '\t', '', str)
+    str = re.sub( '\xa0', '', str)
     return str
 
 def page_parser(page_url):
@@ -40,20 +40,15 @@ def get_page(page):
         news = {'title': title, 'content': content, 'cat': cat,'image': image, 'date': date, 'url': url,}
     return news
 
-record_file = 'govtuva.txt'
-with open(record_file, 'a', encoding='utf8') as file:
-    '''save to file'''
+page_all = ['http://gov.tuva.ru/press_center/news/?PAGEN_1=%s' % i for i in range(1,405)]
+with open(SAVE_FILE, 'a', encoding='utf8') as file:
     pool = ThreadPool(5)
     for page_url in page_all:
         try:
-            news = pool.map(get_page, page_parser(page_url))
-        except:
-            print ('error page')
-        for i in news:
-            try:
-                print (i)
-                file.write(str(i)+'\n')
-            except:
-                print ('error news')
-file.close()
+            news_pool = pool.map(get_page, page_parser(page_url))
+        except Exception as e:
+            print (e)
+        for i in news_pool:
+            file.write(str(i)+'\n')
 
+file.close()
