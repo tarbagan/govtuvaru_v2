@@ -1,8 +1,9 @@
+# парсер новостей на тувинском без multi
 import requests
 from bs4 import BeautifulSoup as bs
 import csv
 
-SAVE_FILE = r'e:\PythonProgect\Test\govtuva.csv'
+SAVE_FILE = r'\Test\govtuva.csv'
 
 def requests_get(url):
     """# get request html from url"""
@@ -18,29 +19,24 @@ def requests_get(url):
         return e
 
 def search_url_page(html):
-    try:
-        url_part = []
-        soup = bs(html, 'lxml')
-        root_html = (soup.find('div', {'class': 'news-list'}))
-        url_page = (root_html.findAll('p', {'class': 'news-item'}))
-        for i in url_page:
-            url =  'http://gov.tuva.ru' + i.find("a").get('href')
-            if url:
-                url_part.append(url)
-        return url_part
-    except:
-        pass
+    url_part = []
+    soup = bs(html, 'lxml')
+    root_html = (soup.find('div', {'class': 'news-list'}))
+    url_page = (root_html.findAll('p', {'class': 'news-item'}))
+    for i in url_page:
+        url =  'http://gov.tuva.ru' + i.find("a").get('href')
+        if url:
+            url_part.append(url)
+    return url_part
+
 
 def get_content(html):
-    try:
-        soup = bs(html, 'lxml')
-        root_html = (soup.find('div', {'class': 'news-detail'}))
-        text = root_html.text
-        text = ''.join(text.split('\n')[3:])
-        if text:
-            return text
-    except:
-        pass
+    soup = bs(html, 'lxml')
+    root_html = (soup.find('div', {'class': 'news-detail'}))
+    text = root_html.text
+    text = ''.join(text.split('\n')[3:])
+    if text:
+        return text
 
 with open(SAVE_FILE, 'w', newline='', encoding='utf-8') as csvfile:
     fieldnames = ['id', 'text']
@@ -57,5 +53,6 @@ with open(SAVE_FILE, 'w', newline='', encoding='utf-8') as csvfile:
                 if text:
                     print (text[0:200])
                     writer.writerow({'id': num, 'text': text})
-        except:
-            pass
+        except Exception as e:
+            print (e)
+            
